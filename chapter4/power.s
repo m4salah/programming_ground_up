@@ -33,7 +33,7 @@ add $16, %rsp
 push %rax
 
 push $3
-push $5
+push $0
 call power
 add $16, %rsp
 

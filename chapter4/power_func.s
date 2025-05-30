@@ -34,6 +34,9 @@ mov %rsp, %rbp
 sub $8, %rsp        # %rbp is pointing to the return address, moving up to access the paramter, moving down to access the local storage.
 mov 16(%rbp), %rbx  # 8(%rbp) pointing to the ret address
 mov 24(%rbp), %rcx
+# Check if the power is zero
+cmp $0, %rcx
+je end_power_zero
 mov %rbx, -8(%rbp)
 
 power_loop_start:
@@ -47,6 +50,12 @@ jmp power_loop_start
 
 end_power:
 mov -8(%rbp), %rax
+mov %rbp, %rsp
+pop %rbp
+ret
+
+end_power_zero:
+mov $1, %rax
 mov %rbp, %rsp
 pop %rbp
 ret
