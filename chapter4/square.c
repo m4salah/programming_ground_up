@@ -1,15 +1,16 @@
 #include <assert.h>
 #include <stdio.h>
 
-int square(int);
+long long square(long long);
 
-int square_c(int a) { return a * a; }
+long long square_c(long long a) { return a * a; }
 
 int main() {
 
-  for (int i = 0; i < 2000; i++) {
+  for (long long i = 0; i < 1000000000; i++) {
     assert(square(i) == square_c(i));
   }
 
   printf("Passed!\n");
+  return 0;
 }
