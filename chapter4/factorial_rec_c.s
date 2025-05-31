@@ -23,10 +23,15 @@ cmp $1, %rax
 je end_factorial
 
 rec_case:
+# save the old value into the stack
 push %rdi
+# decrement the original value
 dec %rdi
+# call the factorial with the decremented value
 call factorial
+# restore the original value into rbx
 pop %rbx
+# multiply the original value to the factorial decremented value
 mul %rbx
 
 end_factorial:
