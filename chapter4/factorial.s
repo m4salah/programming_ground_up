@@ -4,7 +4,7 @@
 .global _start
 
 _start:
-mov $6, %rcx
+mov $5, %rcx
 mov $1, %rax
 
 factorial_loop:

@@ -5,7 +5,7 @@
 
 _start:
 # call factorial_func with 6
-push $6
+push $5
 call factorial_func
 # clean the stack
 add $8, %rsp
