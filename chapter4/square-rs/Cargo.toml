@@ -7,3 +7,8 @@ edition = "2024"
 
 [build-dependencies]
 cc = "1.0"
+
+[profile.release]
+opt-level = 3
+panic = "abort"
+strip = "debuginfo"
