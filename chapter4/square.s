@@ -11,6 +11,7 @@ mov %rax, %rdi
 mov $60, %rax
 syscall
 
+.type square, @function
 square:
 push %rbp
 mov %rsp, %rbp
