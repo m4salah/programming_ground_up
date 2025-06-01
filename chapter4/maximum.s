@@ -1,6 +1,12 @@
 .section .data
-data_items: #These are the data items
+data_items1: #These are the data items
 .quad 3,67,34,222,45,75,54,34,44,33,22,11,66
+
+data_items2: #These are the data items
+.quad 3,67,34,45,75,54,34,44,33,22,11,66
+
+data_items3: #These are the data items
+.quad 3,67,34,45,54,34,44,33,22,11,66
 
 .section .text
 
@@ -9,7 +15,17 @@ data_items: #These are the data items
 
 _start:
 push $13
-push $data_items
+push $data_items1
+call maximum
+add $16, %rsp
+
+push $12
+push $data_items2
+call maximum
+add $16, %rsp
+
+push $11
+push $data_items3
 call maximum
 add $16, %rsp
 
