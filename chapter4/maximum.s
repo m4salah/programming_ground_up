@@ -44,7 +44,7 @@ mov %rsp, %rbp
 mov 16(%rbp), %rbx # Pointer to the first element in the list
 mov 24(%rbp), %rcx # The length of the list
 mov $0, %rdi       # The index iterator
-mov (%rbx, %rdi, 8), %rax
+mov (%rbx, %rdi, 8), %rax # initialize the %rax that hold the currect biggest value with the first element
 
 loop:
 cmp %rdi, %rcx
