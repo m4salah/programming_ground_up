@@ -89,3 +89,240 @@ ret
 - <https://www.sco.com/developers/devspecs/abi386-4.pdf>
 - <https://www.youtube.com/watch?v=9lzW0I9_cpY>
 - <https://refspecs.linuxfoundation.org/LSB_5.0.0/LSB-Core-IA64/LSB-Core-IA64/book1.html>
+
+# Review
+
+## Know the Concepts
+
+### What are primitives?
+
+The primitives is the the most basic things we can't go beyond that like the assembly instruction it the most primitives things we can't break the instruction into smaller one (maybe some instruction are), like also integer. primitives instructions are for example `mov`, `add`, ...etc.
+
+### What are calling conventions?
+
+It's a set of rules of how we pass the parameters to a function and where to expect the return value of it. how the value will be passed to the program, ...etc. we can make our own or we use some calling convention popular like the C calling convention, it may be vary from programming language to another one.
+
+### What is the stack?
+
+In memory the stack it's a chunk of memory that grow downwards the `%rsp` have the address of the top of the stack
+
+### How do `pushl` and `popl` affect the stack? What special-purpose register do they affect?
+
+`pushl` pushes a value from register to the top of the stack this affect the stack pointer`esp`  to make decrease by word size (4byte) and make the stack grow downwards
+`popl` pop the value from the top of the stack to a register it increment the `esp` register
+
+### What are local variables and what are they used for?
+
+local variables is temporarily storage in the function that store something to it and restore it later, the life time of it is the lifetime of the function.
+it's used for storing something temporarily inside the function,
+
+### Why are local variables so necessary in recursive functions?
+
+To store the value before pushing another call to the function, because each call to the function all the registers will be wiped.
+
+### What are `%ebp` and `%esp` used for?
+
+`esp` hold the current address of the top of the stack
+`ebp` hold the address of the beginning of the stack frame it's used to access parameters, and local variables in the function
+
+### What is a stack frame?
+<https://stackoverflow.com/a/10057535>
+It's a frame of data get pushed into the stack likely it will be the function call the stack frame begin when you push the return address then the `ebp` then the local variables needed inside the function before the return address there is the function parameters.
+
+## Use the Concepts
+
+### Write a function called square which receives one argument and returns the square of that argument
+
+```asm
+.section .data
+.section .text
+.global _start
+
+_start:
+push $5
+call square
+add $8, %rsp
+
+mov %rax, %rdi
+mov $60, %rax
+syscall
+
+square:
+push %rbp
+mov %rsp, %rbp
+mov 16(%rbp), %rax
+mul %rax
+
+# end
+mov %rsp, %rbp
+pop %rbp
+ret
+```
+
+### Write a program to test your square function
+
+```c
+// square.c
+#include <assert.h>
+#include <stdio.h>
+
+int square(int);
+
+int square_c(int a) { return a * a; }
+
+int main() {
+
+  for (int i = 0; i < 2000; i++) {
+    assert(square(i) == square_c(i));
+  }
+
+  printf("Passed!\n");
+}
+```
+
+```asm
+# square_c.s
+
+.global square
+
+.type square, @function
+square:
+push %rbp
+mov %rsp, %rbp
+mov %rdi, %rax
+mul %rax
+
+# end
+mov %rsp, %rbp
+pop %rbp
+ret
+```
+
+to run the tests
+
+```sh
+gcc square.c square_c.s -o square && ./square
+```
+
+If you see the output "Passed!" the test cased passed
+this tests, tests the first billion integer only.
+I write also rust code that call square assembly and test the first billion number
+
+### Convert the maximum program given in the Section called Finding a Maximum Value in Chapter 3 so that it is a function which takes a pointer to several values and returns their maximum. Write a program that calls maximum with 3 different lists, and returns the result of the last one as the program’s exit status code
+
+```asm
+.section .data
+data_items1: #These are the data items
+.quad 3,67,34,222,45,75,54,34,44,33,22,11,66
+
+data_items2: #These are the data items
+.quad 3,67,34,45,75,54,34,44,33,22,11,66
+
+data_items3: #These are the data items
+.quad 3,67,34,45,54,34,44,33,22,11,66
+
+.section .text
+
+.global _start
+.global maximum
+
+_start:
+push $13
+push $data_items1
+call maximum
+add $16, %rsp
+
+push $12
+push $data_items2
+call maximum
+add $16, %rsp
+
+push $11
+push $data_items3
+call maximum
+add $16, %rsp
+
+exit:
+# exit syscall
+# https://electronicsreference.com/assembly-language/linux_syscalls/exit/
+mov %rax, %rdi
+mov $60, %rax
+syscall
+
+
+.type maximum, @function
+maximum:
+push %rbp
+mov %rsp, %rbp
+mov 16(%rbp), %rbx # Pointer to the first element in the list
+mov 24(%rbp), %rcx # The length of the list
+mov $0, %rdi       # The index iterator
+mov (%rbx, %rdi, 8), %rax
+
+loop:
+cmp %rdi, %rcx
+je loop_end
+inc %rdi
+cmp %rax, (%rbx, %rdi, 8)
+jle loop
+mov (%rbx, %rdi, 8), %rax
+jmp loop
+
+loop_end:
+mov %rbp, %rsp
+pop %rbp
+ret
+```
+
+### Explain the problems that would arise without a standard calling convention
+
+Without standard calling convention everyone will do his own and this will separate the programming language from calling each other and benefit from each others in some areas. and calling function from another calling convention will be a mess the registers will be out of values and undefined behaviors will occur a lot.
+
+## Going Further
+
+### Do you think it’s better for a system to have a large set of primitives or a small one, assuming that the larger set can be written in terms of the smaller one?
+
+The tradeoff here if you want higher abstraction or lower abstraction if we want higher abstraction is that will affect the complexity of designing the CPU. We need to have the right balance between the two
+
+### The factorial function can be written non-recursively. Do so
+
+```asm
+.section .data
+.section .text
+
+.global _start
+
+_start:
+mov $5, %rcx
+mov $1, %rax
+
+factorial_loop:
+cmp $1, %rcx
+je end_loop
+mul %rcx
+dec %rcx
+jmp factorial_loop
+
+end_loop:
+mov %rax, %rdi
+mov $60, %rax
+syscall
+```
+
+### Find an application on the computer you use regularly. Try to locate a specific feature, and practice breaking that feature out into functions. Define the function interfaces between that feature and the rest of the program
+
+I use Obsidian So I will choose the render line which take a line and render it in markdown syntax, so i think the function will be `render` which take a buffer (line) and the output will be appropriate rendered like `render(char *buffer, size_t length)`
+
+### Come up with your own calling convention. Rewrite the programs in this chapter using it. An example of a different calling convention would be to pass parameters in registers rather than the stack, to pass them in a different order, to return values in other registers or memory locations. Whatever you pick, be consistent and apply it throughout the whole program
+
+in x86_64 calling convention the first 9 parameters passed in registers like `rdi`, `rsi` and so on more than that it will be pushed to the stack I have written multiple ones using this calling convention to call this function from C like `factorial_rec_c.s` this is using x86_64 calling convention, `factorial.c` this used to call `factrorial` function from `factorial_rec_c.s`.
+
+### Can you build a calling convention without using the stack? What limitations might it have?
+
+Yes you can but the limitation here is the number of parameters will be passed it will be limited across all the programming language.
+
+### What test cases should we use in our example program to check to see if it is working properly?
+
+1. Test the simplest case
+2. Test the edge cases
+3. Invalid input cases
