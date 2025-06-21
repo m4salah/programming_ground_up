@@ -22,7 +22,8 @@
 .equ NUMBER_ARGUMENTS, 2
 
 hello: .string "Hey diddle diddle!\n"
-.equ MESSAGE_LEN, . - hello - 1  # . for the current address, hello for the address of the message, 1 for the null terminator so it's like current_address - the begin adress - 1
+.equ MESSAGE_LEN, . - hello - 1  
+     # . for the current address, hello for the address of the message, 1 for the null terminator so it's like current_address - the begin adress - 1
 file: .string "heynow.txt"
 
 .section .text
