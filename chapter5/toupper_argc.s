@@ -61,7 +61,7 @@ _start:
 mov %rsp, %rbp
 
 cmp $3, %rbp
-je open_files
+jge open_files
 jmp read_from_stdin
 
 open_files:
@@ -99,12 +99,14 @@ cmp $END_OF_FILE, %rax		#check for the end of file marker
 jle end_loop			#if found or on error, go to end
 
 continue_read_loop:
+push %rax
 #convert the block to uppercase
 mov %rax, %rdi			#first argument: buffer size
 mov $BUFFER_DATA, %rsi		#second argument: buffer location
 call convert_to_upper		#call conversion function
 
 #write the block out to the output file
+pop %rax
 mov %rax, %rdx			#buffer size (third argument)
 mov $SYS_WRITE, %rax		#write system call
 mov ST_FD_OUT(%rbp), %rdi	#file descriptor (first argument)
