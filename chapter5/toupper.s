@@ -97,11 +97,13 @@ jle end_loop			#if found or on error, go to end
 
 continue_read_loop:
 #convert the block to uppercase
+push %rax
 mov %rax, %rdi			#first argument: buffer size
 mov $BUFFER_DATA, %rsi		#second argument: buffer location
 call convert_to_upper		#call conversion function
 
 #write the block out to the output file
+pop %rax
 mov %rax, %rdx			#buffer size (third argument)
 mov $SYS_WRITE, %rax		#write system call
 mov ST_FD_OUT(%rbp), %rdi	#file descriptor (first argument)

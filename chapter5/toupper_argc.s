@@ -111,7 +111,7 @@ mov ST_FD_OUT(%rbp), %rdi	#file descriptor (first argument)
 mov $BUFFER_DATA, %rsi		#buffer location (second argument)
 syscall				#call kernel
 
-#Continue the loop
+# Continue the loop
 jmp read_loop_begin
 
 end_loop:
