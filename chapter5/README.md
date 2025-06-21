@@ -33,19 +33,19 @@ Buffers exist to manage differences in speed between data producers and consumer
 
 ### Modify the `toupper` program so that it reads from `STDIN` and writes to `STDOUT` instead of using the files on the command-line
 
-reference the [echo.s](/echo.s)
+reference the [echo.s](/chapter5/echo.s)
 
 ### Change the size of the buffer
 
-reference the [toupper_buf.s](/toupper_buf.s)
+reference the [toupper_buf.s](/chapter5/toupper_buf.s)
 
 ### Rewrite the program so that it uses storage in the .bss section rather than the stack to store the file descriptors
 
-reference the [toupper.bss.s](/toupper.bss.s)
+reference the [toupper.bss.s](/chapter5/toupper.bss.s)
 
 ### Write a program that will create a file called heynow.txt and write the words "Hey diddle diddle!" into it
 
-reference the [hello_writer.s](/hello_writer.s)
+reference the [hello_writer.s](/chapter5/hello_writer.s)
 
 ## Going Further
 
@@ -63,8 +63,8 @@ The best way to know is to read the man page for it
 
 ### Make the program able to either operate on command-line arguments or use STDIN or STDOUT based on the number of command-line arguments specified by ARGC
 
-reference the [toupper_argc.s](/toupper_argc.s)
+reference the [toupper_argc.s](/chapter5/toupper_argc.s)
 
 ### Modify the program so that it checks the results of each system call, and prints out an error message to STDOUT when it occurs
 
-reference the [toupper_err.s](/toupper_err.s)
+reference the [toupper_err.s](/chapter5/toupper_err.s)
