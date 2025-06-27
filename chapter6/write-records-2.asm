@@ -31,7 +31,7 @@ times 40 - ($-job2) db 0
 address2: db "2224 S Johannan St", 10, "Chicago, IL 12345",0
 times 240 - ($-address2) db 0
 
-age2: dd 29
+age2: dd 99
 
 record3:
 fname3: db "Derrick", 0 ; first name
